@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 public class GameMapper {
     public static GameDto toDto(Game game) {
         return new GameDto(
-                game.getId(),
                 game.getTitle(),
                 game.getDescription(),
                 game.getPrice(),

@@ -1,5 +1,6 @@
 package com.gamestore.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
@@ -19,6 +20,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class Game {
     @Id
+    @JsonIgnore
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;

@@ -38,8 +38,8 @@ public class GameController {
     }
 
     @PostMapping("")
-    public ResponseEntity<Game> saveGame(@RequestBody Game gameDto) {
-        Game savedGame = gameService.saveGame(gameDto);
+    public ResponseEntity<List<Game>> saveGame(@RequestBody List<Game> gameDtoList) {
+        List<Game> savedGame = gameService.saveGame(gameDtoList);
         return new ResponseEntity<>(savedGame, HttpStatus.CREATED);
     }
 

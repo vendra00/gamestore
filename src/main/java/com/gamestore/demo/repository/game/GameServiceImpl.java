@@ -15,10 +15,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -41,13 +38,11 @@ public class GameServiceImpl implements GameService {
         log.info("Retrieving all games from the database");
         List<GameDto> gameDTOs = gameRepository.findAll().stream()
                 .map(game -> new GameDto(
-                        game.getId(),
                         game.getTitle(),
                         game.getDescription(),
                         game.getPrice(),
                         game.getPlatforms().stream()
                                 .map(platform -> new PlatformDto(
-                                        platform.getId(),
                                         platform.getName(),
                                         platform.getDescription()
                                 ))
@@ -76,35 +71,38 @@ public class GameServiceImpl implements GameService {
         Game game = gameRepository.findById(id).orElseThrow(() -> new GameNotFoundException(id));
         Set<PlatformDto> platformDtos = game.getPlatforms().stream()
                 .map(platform -> new PlatformDto(
-                        platform.getId(),
                         platform.getName(),
                         platform.getDescription()
                 ))
                 .collect(Collectors.toSet());
-        return new GameDto(game.getId(), game.getTitle(), game.getDescription(), game.getPrice(), platformDtos);
+        return new GameDto(game.getTitle(), game.getDescription(), game.getPrice(), platformDtos);
     }
 
-    @Override
-    public Game saveGame(Game game) {
-        log.info("Saving new game with title {} to the database", game.getTitle());
-        try {
-            Set<Platform> selectedPlatforms = new HashSet<>();
-            for (Platform platform : game.getPlatforms()) {
-                Optional<Platform> optionalPlatform = platformRepository.findByName(platform.getName());
-                if (optionalPlatform.isPresent()) {
-                    selectedPlatforms.add(optionalPlatform.get());
-                } else {
-                    Platform savedPlatform = platformRepository.save(platform);
-                    selectedPlatforms.add(savedPlatform);
+    public List<Game> saveGame(List<Game> games) {
+        List<Game> savedGames = new ArrayList<>();
+        for (Game game : games) {
+            log.info("Saving new game with title {} to the database", game.getTitle());
+            try {
+                Set<Platform> selectedPlatforms = new HashSet<>();
+                for (Platform platform : game.getPlatforms()) {
+                    Optional<Platform> optionalPlatform = platformRepository.findByName(platform.getName());
+                    if (optionalPlatform.isPresent()) {
+                        selectedPlatforms.add(optionalPlatform.get());
+                    } else {
+                        Platform savedPlatform = platformRepository.save(platform);
+                        selectedPlatforms.add(savedPlatform);
+                    }
                 }
+                game.setPlatforms(selectedPlatforms);
+                savedGames.add(gameRepository.save(game));
+            } catch (DataIntegrityViolationException e) {
+                log.warn("Could not save game with title {} to the database because it already exists", game.getTitle());
+                throw new GameAlreadyExistsException(game.getTitle());
             }
-            game.setPlatforms(selectedPlatforms);
-            return gameRepository.save(game);
-        } catch (DataIntegrityViolationException e) {
-            log.warn("Could not save game with title {} to the database because it already exists", game.getTitle());
-            throw new GameAlreadyExistsException(game.getTitle());
         }
+        return savedGames;
     }
+
 
     @Override
     public Game updateGame(Long id, Game game) {

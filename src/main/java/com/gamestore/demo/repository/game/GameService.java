@@ -9,7 +9,7 @@ public interface GameService {
     List<GameDto> getAllGames();
     List<GameDto> getGamesByPlatformName(String platformName);
     GameDto getGameById(Long id);
-    Game saveGame(Game gameDto);
+    List<Game> saveGame(List<Game> gameDto);
     Game updateGame(Long id, Game gameDto);
     void deleteGameById(Long id);
 }

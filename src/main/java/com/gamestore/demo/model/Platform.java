@@ -1,6 +1,7 @@
 package com.gamestore.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gamestore.demo.model.dto.PlatformDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -16,6 +17,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class Platform {
     @Id
+    @JsonIgnore
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -31,7 +33,6 @@ public class Platform {
 
     public PlatformDto toDto() {
         return new PlatformDto(
-                this.getId(),
                 this.getName(),
                 this.getDescription()
         );
