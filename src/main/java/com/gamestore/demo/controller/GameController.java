@@ -27,12 +27,12 @@ public class GameController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<GameDto>> getAllGames(@PageableDefault(size = 25) Pageable pageable) {
+    public ResponseEntity<Page<GameDto>> getAllGames(@PageableDefault(size = 25) Pageable pageable) {
         Page<GameDto> games = gameService.getAllGames(pageable);
         if (games.isEmpty()) {
             throw new GameListEmptyException();
         }
-        return new ResponseEntity<>(games.getContent(), HttpStatus.OK);
+        return new ResponseEntity<>(games, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")

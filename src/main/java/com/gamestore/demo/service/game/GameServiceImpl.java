@@ -42,9 +42,10 @@ public class GameServiceImpl implements GameService {
     @Override
     @Transactional(readOnly = true)
     public Page<GameDto> getAllGames(Pageable pageable) {
-        log.info("Retrieving all games from the database");
+        log.info("Retrieving all games from the database. Page number: {}, page size: {}.", pageable.getPageNumber(), pageable.getPageSize());
         Page<Game> gamePage = gameRepository.findAll(pageable);
         if (gamePage.isEmpty()) {
+            log.warn("No games found in the database.");
             throw new GameListEmptyException();
         }
         Page<GameDto> gameDtoPage = gamePage.map(game -> new GameDto(
@@ -58,9 +59,10 @@ public class GameServiceImpl implements GameService {
                         ))
                         .collect(Collectors.toSet())
         ));
-        log.info("Found {} games in the database", gameDtoPage.getTotalElements());
+        log.info("Found {} games in the database.", gameDtoPage.getTotalElements());
         return gameDtoPage;
     }
+
 
     @Override
     public List<GameDto> getGamesByPlatformName(String platformName) {
