@@ -43,13 +43,11 @@ public class GameController {
         return new ResponseEntity<>(savedGame, HttpStatus.CREATED);
     }
 
-
     @PutMapping("/{id}")
     public ResponseEntity<Game> update(@PathVariable Long id, @Valid @RequestBody Game game) {
         Game updatedGame = gameService.updateGame(id, game);
         return updatedGame != null ? new ResponseEntity<>(updatedGame, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
-
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteGame(@PathVariable Long id) {
@@ -57,5 +55,10 @@ public class GameController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @GetMapping(params = "platform")
+    public ResponseEntity<List<GameDto>> getGamesByPlatformName(@RequestParam("platform") String platformName) {
+        List<GameDto> games = gameService.getGamesByPlatformName(platformName);
+        return new ResponseEntity<>(games, HttpStatus.OK);
+    }
 }
 

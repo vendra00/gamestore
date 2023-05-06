@@ -7,6 +7,7 @@ import com.gamestore.demo.model.Game;
 import com.gamestore.demo.model.Platform;
 import com.gamestore.demo.model.dto.GameDto;
 import com.gamestore.demo.model.dto.PlatformDto;
+import com.gamestore.demo.model.mapper.GameMapper;
 import com.gamestore.demo.repository.platform.PlatformRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +59,14 @@ public class GameServiceImpl implements GameService {
         }
         log.info("Found {} games in the database", gameDTOs.size());
         return gameDTOs;
+    }
+
+    @Override
+    public List<GameDto> getGamesByPlatformName(String platformName) {
+        List<Game> games = gameRepository.findByPlatformName(platformName);
+        return games.stream()
+                .map(GameMapper::toDto)
+                .collect(Collectors.toList());
     }
 
     @Override

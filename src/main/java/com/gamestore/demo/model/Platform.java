@@ -1,6 +1,7 @@
 package com.gamestore.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.gamestore.demo.model.dto.PlatformDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -27,5 +28,13 @@ public class Platform {
     @JsonBackReference
     @ManyToMany(mappedBy = "platforms", fetch = FetchType.LAZY)
     private Set<Game> games = new HashSet<>();
+
+    public PlatformDto toDto() {
+        return new PlatformDto(
+                this.getId(),
+                this.getName(),
+                this.getDescription()
+        );
+    }
 
 }
