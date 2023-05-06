@@ -1,7 +1,8 @@
-package com.gamestore.demo.repository.platform;
+package com.gamestore.demo.service.platform;
 
 import com.gamestore.demo.exceptions.platform.PlatformNotFoundException;
 import com.gamestore.demo.model.Platform;
+import com.gamestore.demo.repository.PlatformRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

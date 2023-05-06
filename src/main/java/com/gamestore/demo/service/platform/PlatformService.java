@@ -1,4 +1,4 @@
-package com.gamestore.demo.repository.platform;
+package com.gamestore.demo.service.platform;
 
 import com.gamestore.demo.model.Platform;
 

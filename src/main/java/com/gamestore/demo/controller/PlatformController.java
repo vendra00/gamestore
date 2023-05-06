@@ -1,7 +1,7 @@
 package com.gamestore.demo.controller;
 
 import com.gamestore.demo.model.Platform;
-import com.gamestore.demo.repository.platform.PlatformService;
+import com.gamestore.demo.service.platform.PlatformService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

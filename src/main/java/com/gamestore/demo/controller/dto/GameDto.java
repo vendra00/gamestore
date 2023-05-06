@@ -1,4 +1,4 @@
-package com.gamestore.demo.model.dto;
+package com.gamestore.demo.controller.dto;
 
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;

@@ -1,4 +1,4 @@
-package com.gamestore.demo.repository.platform;
+package com.gamestore.demo.repository;
 
 import com.gamestore.demo.model.Platform;
 import org.springframework.data.jpa.repository.JpaRepository;

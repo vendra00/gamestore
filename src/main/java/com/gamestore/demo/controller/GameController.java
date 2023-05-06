@@ -1,10 +1,14 @@
 package com.gamestore.demo.controller;
 
+import com.gamestore.demo.exceptions.game.GameListEmptyException;
 import com.gamestore.demo.model.Game;
-import com.gamestore.demo.model.dto.GameDto;
-import com.gamestore.demo.repository.game.GameService;
+import com.gamestore.demo.controller.dto.GameDto;
+import com.gamestore.demo.service.game.GameService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,9 +27,12 @@ public class GameController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<GameDto>> getAllGames() {
-        List<GameDto> games = gameService.getAllGames();
-        return new ResponseEntity<>(games, HttpStatus.OK);
+    public ResponseEntity<List<GameDto>> getAllGames(@PageableDefault(size = 25) Pageable pageable) {
+        Page<GameDto> games = gameService.getAllGames(pageable);
+        if (games.isEmpty()) {
+            throw new GameListEmptyException();
+        }
+        return new ResponseEntity<>(games.getContent(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")

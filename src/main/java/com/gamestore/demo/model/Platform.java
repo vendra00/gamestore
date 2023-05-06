@@ -2,7 +2,7 @@ package com.gamestore.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.gamestore.demo.model.dto.PlatformDto;
+import com.gamestore.demo.controller.dto.PlatformDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;

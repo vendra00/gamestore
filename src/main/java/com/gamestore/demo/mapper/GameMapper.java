@@ -1,8 +1,8 @@
-package com.gamestore.demo.model.mapper;
+package com.gamestore.demo.mapper;
 
 import com.gamestore.demo.model.Game;
 import com.gamestore.demo.model.Platform;
-import com.gamestore.demo.model.dto.GameDto;
+import com.gamestore.demo.controller.dto.GameDto;
 
 import java.util.stream.Collectors;
 
