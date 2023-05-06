@@ -1,7 +1,8 @@
 package com.gamestore.demo.controller;
 
 import com.gamestore.demo.model.Game;
-import com.gamestore.demo.repository.GameService;
+import com.gamestore.demo.model.dto.GameDto;
+import com.gamestore.demo.repository.game.GameService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,18 +15,22 @@ import java.util.List;
 @RequestMapping("/games")
 public class GameController {
 
+    private final GameService gameService;
+
     @Autowired
-    private GameService gameService;
+    public GameController(GameService gameService) {
+        this.gameService = gameService;
+    }
 
     @GetMapping("")
-    public ResponseEntity<List<Game>> getAllGames() {
-        List<Game> games = gameService.getAllGames();
+    public ResponseEntity<List<GameDto>> getAllGames() {
+        List<GameDto> games = gameService.getAllGames();
         return new ResponseEntity<>(games, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Game> getGameById(@PathVariable Long id) {
-        Game game = gameService.getGameById(id);
+    public ResponseEntity<GameDto> getGameById(@PathVariable Long id) {
+        GameDto game = gameService.getGameById(id);
         if (game == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -33,17 +38,16 @@ public class GameController {
     }
 
     @PostMapping("")
-    public ResponseEntity<Game> saveGame(@RequestBody Game game) {
-        Game savedGame = gameService.saveGame(game);
+    public ResponseEntity<Game> saveGame(@RequestBody Game gameDto) {
+        Game savedGame = gameService.saveGame(gameDto);
         return new ResponseEntity<>(savedGame, HttpStatus.CREATED);
     }
+
 
     @PutMapping("/{id}")
     public ResponseEntity<Game> update(@PathVariable Long id, @Valid @RequestBody Game game) {
         Game updatedGame = gameService.updateGame(id, game);
-        return updatedGame != null ?
-                new ResponseEntity<>(updatedGame, HttpStatus.OK) :
-                new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return updatedGame != null ? new ResponseEntity<>(updatedGame, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
 
