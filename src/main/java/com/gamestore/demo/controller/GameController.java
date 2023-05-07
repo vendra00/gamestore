@@ -83,5 +83,17 @@ public class GameController {
         return new ResponseEntity<>(games, HttpStatus.OK);
     }
 
+    @GetMapping("/singlePlayer/{singlePlayer}")
+    public ResponseEntity<Page<GameDto>> getSinglePlayerGames(@PathVariable boolean singlePlayer, @PageableDefault(size = 25) Pageable pageable) {
+        Page<GameDto> games = gameService.getGamesBySinglePlayer(singlePlayer, pageable);
+        return new ResponseEntity<>(games, HttpStatus.OK);
+    }
+
+    @GetMapping("/multiPlayer/{multiPlayer}")
+    public ResponseEntity<Page<GameDto>> getMultiPlayerGames(@PathVariable boolean multiPlayer, @PageableDefault(size = 25) Pageable pageable) {
+        Page<GameDto> games = gameService.getGamesByMultiPlayer(multiPlayer, pageable);
+        return new ResponseEntity<>(games, HttpStatus.OK);
+    }
+
 }
 

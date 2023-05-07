@@ -107,6 +107,32 @@ public class GameServiceImpl implements GameService {
 
     @Override
     @Transactional(readOnly = true)
+    public Page<GameDto> getGamesBySinglePlayer(boolean singlePlayer, Pageable pageable) {
+        Page<Game> games = gameRepository.findBySinglePlayer(singlePlayer, pageable);
+        if (games.isEmpty()) {
+            log.warn("No single player games found in the database");
+            throw new GameListEmptyException("No single player games found in the database.");
+        }
+        Page<GameDto> gameDtoPage = games.map(GameMapper::toGameDto);
+        log.info("Found {} single player games in the database.", gameDtoPage.getTotalElements());
+        return gameDtoPage;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<GameDto> getGamesByMultiPlayer(boolean multiPlayer, Pageable pageable) {
+        Page<Game> games = gameRepository.findByMultiPlayer(multiPlayer, pageable);
+        if (games.isEmpty()) {
+            log.warn("No multi player games found in the database");
+            throw new GameListEmptyException("No multi player games found in the database.");
+        }
+        Page<GameDto> gameDtoPage = games.map(GameMapper::toGameDto);
+        log.info("Found {} multi player games in the database.", gameDtoPage.getTotalElements());
+        return gameDtoPage;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public GameDto getGameById(Long id) {
         log.info("Retrieving game with ID {} from the database", id);
         Game game = gameRepository.findById(id).orElseThrow(() -> new GameNotFoundException(id));

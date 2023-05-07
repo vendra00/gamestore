@@ -33,11 +33,19 @@ public class Game {
     @NotBlank(message = "Description cannot be empty")
     private String description;
 
+    @NotNull(message = "Price cannot be empty")
     @DecimalMin("0.01")
     private Double price;
 
+    @NotNull(message = "Genre cannot be empty")
     @Enumerated(EnumType.STRING)
     private Genre genre;
+
+    @NotNull(message = "Single player cannot be empty")
+    private Boolean singlePlayer;
+
+    @NotNull(message = "Multi player cannot be empty")
+    private Boolean multiPlayer;
 
     @NotNull(message = "Release date cannot be empty")
     @Temporal(TemporalType.DATE)
