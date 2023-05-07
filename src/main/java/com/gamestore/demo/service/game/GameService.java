@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface GameService {
     Page<GameDto> getAllGames(Pageable pageable);
-    List<GameDto> getGamesByPlatformName(String platformName);
+    Page<GameDto> getGamesByPlatformName(String platformName, Pageable pageable);
     GameDto getGameById(Long id);
     List<Game> saveGame(List<Game> gameDto) throws GameStoreException;
     Game updateGame(Long id, Game gameDto);

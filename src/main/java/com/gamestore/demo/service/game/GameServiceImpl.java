@@ -5,7 +5,6 @@ import com.gamestore.demo.controller.dto.PlatformDto;
 import com.gamestore.demo.exceptions.game.GameAlreadyExistsException;
 import com.gamestore.demo.exceptions.game.GameListEmptyException;
 import com.gamestore.demo.exceptions.game.GameNotFoundException;
-import com.gamestore.demo.mapper.GameMapper;
 import com.gamestore.demo.model.Game;
 import com.gamestore.demo.model.Platform;
 import com.gamestore.demo.repository.GameRepository;
@@ -64,11 +63,27 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public List<GameDto> getGamesByPlatformName(String platformName) {
-        List<Game> games = gameRepository.findByPlatformName(platformName);
-        return games.stream()
-                .map(GameMapper::toDto)
-                .collect(Collectors.toList());
+    @Transactional(readOnly = true)
+    public Page<GameDto> getGamesByPlatformName(String platformName, Pageable pageable) {
+        log.info("Retrieving all games with platform name {} from the database. Page number: {}, page size: {}.", platformName, pageable.getPageNumber(), pageable.getPageSize());
+        Page<Game> gamePage = gameRepository.findByPlatformName(platformName, pageable);
+        if (gamePage.isEmpty()) {
+            log.warn("No games found in the database with platform name {}.", platformName);
+            throw new GameListEmptyException("No games found in the database with platform name " + platformName + ".");
+        }
+        Page<GameDto> gameDtoPage = gamePage.map(game -> new GameDto(
+                game.getTitle(),
+                game.getDescription(),
+                game.getPrice(),
+                game.getPlatforms().stream()
+                        .map(platform -> new PlatformDto(
+                                platform.getName(),
+                                platform.getDescription()
+                        ))
+                        .collect(Collectors.toSet())
+        ));
+        log.info("Found {} games in the database with platform name {}.", gameDtoPage.getTotalElements(), platformName);
+        return gameDtoPage;
     }
 
     @Override
