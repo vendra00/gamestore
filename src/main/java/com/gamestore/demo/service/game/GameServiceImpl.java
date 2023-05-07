@@ -1,7 +1,6 @@
 package com.gamestore.demo.service.game;
 
 import com.gamestore.demo.controller.dto.GameDto;
-import com.gamestore.demo.controller.dto.PlatformDto;
 import com.gamestore.demo.exceptions.game.GameAlreadyExistsException;
 import com.gamestore.demo.exceptions.game.GameListEmptyException;
 import com.gamestore.demo.exceptions.game.GameNotFoundException;
@@ -12,6 +11,7 @@ import com.gamestore.demo.repository.GameRepository;
 import com.gamestore.demo.repository.PlatformRepository;
 import com.gamestore.demo.service.validation.GameValidator;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Transactional
@@ -72,13 +71,11 @@ public class GameServiceImpl implements GameService {
     public GameDto getGameById(Long id) {
         log.info("Retrieving game with ID {} from the database", id);
         Game game = gameRepository.findById(id).orElseThrow(() -> new GameNotFoundException(id));
-        Set<PlatformDto> platformDtos = game.getPlatforms().stream()
-                .map(platform -> new PlatformDto(
-                        platform.getName(),
-                        platform.getDescription()
-                ))
-                .collect(Collectors.toSet());
-        return new GameDto(game.getTitle(), game.getDescription(), game.getPrice(), platformDtos);
+
+        // Eagerly fetch platforms collection
+        Hibernate.initialize(game.getPlatforms());
+
+        return GameMapper.toGameDto(game);
     }
 
     @Override
@@ -105,16 +102,12 @@ public class GameServiceImpl implements GameService {
 
 
     @Override
+    @Transactional
     public Game updateGame(Long id, Game game) {
         log.info("Updating game with ID {} in the database", id);
-        Optional<Game> optionalGame = gameRepository.findById(id);
-        if (optionalGame.isPresent()) {
-            Game existingGame = optionalGame.get();
-            setEditedGameValues(game, existingGame);
-            return gameRepository.save(existingGame);
-        } else {
-            throw new GameNotFoundException(id);
-        }
+        Game existingGame = gameRepository.findById(id).orElseThrow(() -> new GameNotFoundException(id));
+        setEditedGameValues(game, existingGame);
+        return gameRepository.save(existingGame);
     }
 
     private static void setEditedGameValues(Game game, Game existingGame) {
