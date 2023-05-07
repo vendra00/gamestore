@@ -119,6 +119,7 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
+    @Transactional
     public List<Game> saveGame(List<Game> games) {
         List<Game> savedGames = games.stream()
                 .filter(GameValidator::isValidGame)
@@ -155,6 +156,7 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
+    @Transactional
     public void deleteGameById(Long id) {
         log.info("Attempting to delete game with ID {} from the database", id);
         Optional<Game> optionalGame = gameRepository.findById(id);
