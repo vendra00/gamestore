@@ -112,13 +112,18 @@ public class GameServiceImpl implements GameService {
 
     @Override
     public void deleteGameById(Long id) {
-        log.info("Deleting game with ID {} from the database", id);
+        log.info("Attempting to delete game with ID {} from the database", id);
         Optional<Game> optionalGame = gameRepository.findById(id);
         if (optionalGame.isPresent()) {
+            Game gameToDelete = optionalGame.get();
+            log.info("Deleting game with ID {} from the database. Title: {}", id, gameToDelete.getTitle());
             gameRepository.deleteById(id);
+            log.info("Game with ID {} deleted successfully from the database.", id);
         } else {
+            log.warn("Could not find game with ID {} in the database for deletion.", id);
             throw new GameNotFoundException(id);
         }
     }
+
 }
 
