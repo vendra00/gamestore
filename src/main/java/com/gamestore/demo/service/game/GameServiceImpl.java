@@ -5,6 +5,7 @@ import com.gamestore.demo.controller.dto.PlatformDto;
 import com.gamestore.demo.exceptions.game.GameAlreadyExistsException;
 import com.gamestore.demo.exceptions.game.GameListEmptyException;
 import com.gamestore.demo.exceptions.game.GameNotFoundException;
+import com.gamestore.demo.mapper.GameMapper;
 import com.gamestore.demo.model.Game;
 import com.gamestore.demo.model.Platform;
 import com.gamestore.demo.repository.GameRepository;
@@ -47,17 +48,7 @@ public class GameServiceImpl implements GameService {
             log.warn("No games found in the database.");
             throw new GameListEmptyException("No games found in the database.");
         }
-        Page<GameDto> gameDtoPage = gamePage.map(game -> new GameDto(
-                game.getTitle(),
-                game.getDescription(),
-                game.getPrice(),
-                game.getPlatforms().stream()
-                        .map(platform -> new PlatformDto(
-                                platform.getName(),
-                                platform.getDescription()
-                        ))
-                        .collect(Collectors.toSet())
-        ));
+        Page<GameDto> gameDtoPage = gamePage.map(GameMapper::toGameDto);
         log.info("Found {} games in the database.", gameDtoPage.getTotalElements());
         return gameDtoPage;
     }
@@ -71,17 +62,7 @@ public class GameServiceImpl implements GameService {
             log.warn("No games found in the database with platform name {}.", platformName);
             throw new GameListEmptyException("No games found in the database with platform name " + platformName + ".");
         }
-        Page<GameDto> gameDtoPage = gamePage.map(game -> new GameDto(
-                game.getTitle(),
-                game.getDescription(),
-                game.getPrice(),
-                game.getPlatforms().stream()
-                        .map(platform -> new PlatformDto(
-                                platform.getName(),
-                                platform.getDescription()
-                        ))
-                        .collect(Collectors.toSet())
-        ));
+        Page<GameDto> gameDtoPage = gamePage.map(GameMapper::toGameDto);
         log.info("Found {} games in the database with platform name {}.", gameDtoPage.getTotalElements(), platformName);
         return gameDtoPage;
     }
