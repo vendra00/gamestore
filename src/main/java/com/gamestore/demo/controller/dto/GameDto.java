@@ -1,5 +1,6 @@
 package com.gamestore.demo.controller.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gamestore.demo.model.enums.Genre;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
@@ -15,7 +16,7 @@ public record GameDto(
         @NotNull @DecimalMin("0.01") Double price,
         @NotNull Genre genre,
         @NotNull @PastOrPresent Date releaseDate,
-        @NotNull @PastOrPresent Date lastUpdated,
+        @JsonIgnore @NotNull @PastOrPresent Date lastUpdated,
         Set<PlatformDto> platforms
 ) {
 }

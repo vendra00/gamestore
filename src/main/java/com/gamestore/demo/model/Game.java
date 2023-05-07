@@ -44,9 +44,10 @@ public class Game {
     @Temporal(TemporalType.DATE)
     private Date releaseDate;
 
-    @JsonIgnore
+    @NotNull
     @Temporal(TemporalType.TIMESTAMP)
-    private Date lastUpdated;
+    private Date lastUpdated = new Date();
+
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
