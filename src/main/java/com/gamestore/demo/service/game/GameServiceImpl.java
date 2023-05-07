@@ -7,6 +7,7 @@ import com.gamestore.demo.exceptions.game.GameNotFoundException;
 import com.gamestore.demo.mapper.GameMapper;
 import com.gamestore.demo.model.Game;
 import com.gamestore.demo.model.Platform;
+import com.gamestore.demo.model.enums.Genre;
 import com.gamestore.demo.repository.GameRepository;
 import com.gamestore.demo.repository.PlatformRepository;
 import com.gamestore.demo.service.game.utils.GameUtils;
@@ -69,6 +70,19 @@ public class GameServiceImpl implements GameService {
 
     @Override
     @Transactional(readOnly = true)
+    public Page<GameDto> getGamesByGenre(Genre genre, Pageable pageable) {
+        Page<Game> games = gameRepository.findByGenre(genre, pageable);
+        if (games.isEmpty()) {
+            log.warn("No games found in the database with genre name {}.", genre);
+            throw new GameListEmptyException("No games found in the database with genre name " + genre + ".");
+        }
+        Page<GameDto> gameDtoPage = games.map(GameMapper::toGameDto);
+        log.info("Found {} games in the database with platform name {}.", gameDtoPage.getTotalElements(), genre);
+        return gameDtoPage;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public GameDto getGameById(Long id) {
         log.info("Retrieving game with ID {} from the database", id);
         Game game = gameRepository.findById(id).orElseThrow(() -> new GameNotFoundException(id));
@@ -124,6 +138,5 @@ public class GameServiceImpl implements GameService {
             throw new GameNotFoundException(id);
         }
     }
-
 }
 

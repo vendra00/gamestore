@@ -3,6 +3,7 @@ package com.gamestore.demo.service.game;
 import com.gamestore.demo.exceptions.GameStoreException;
 import com.gamestore.demo.model.Game;
 import com.gamestore.demo.controller.dto.GameDto;
+import com.gamestore.demo.model.enums.Genre;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -15,4 +16,5 @@ public interface GameService {
     List<Game> saveGame(List<Game> gameDto) throws GameStoreException;
     Game updateGame(Long id, Game gameDto);
     void deleteGameById(Long id);
+    Page<GameDto> getGamesByGenre(Genre genre, Pageable pageable);
 }

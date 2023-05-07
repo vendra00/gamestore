@@ -2,6 +2,7 @@ package com.gamestore.demo.controller;
 
 import com.gamestore.demo.controller.dto.GameDto;
 import com.gamestore.demo.model.Game;
+import com.gamestore.demo.model.enums.Genre;
 import com.gamestore.demo.service.game.GameService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +62,12 @@ public class GameController {
     @GetMapping("/platform/{platformName}")
     public ResponseEntity<Page<GameDto>> getGamesByPlatformName(@RequestParam("platform") String platformName, @PageableDefault(size = 25) Pageable pageable) {
         Page<GameDto> games = gameService.getGamesByPlatformName(platformName, pageable);
+        return new ResponseEntity<>(games, HttpStatus.OK);
+    }
+
+    @GetMapping("/genre/{genre}")
+    public ResponseEntity<Page<GameDto>> getGamesByGenre(@PathVariable Genre genre, @PageableDefault(size = 25) Pageable pageable) {
+        Page<GameDto> games = gameService.getGamesByGenre(genre, pageable);
         return new ResponseEntity<>(games, HttpStatus.OK);
     }
 }
