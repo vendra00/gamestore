@@ -1,6 +1,7 @@
 package com.gamestore.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.gamestore.demo.model.enums.Genre;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
@@ -25,16 +26,19 @@ public class Game {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @NotBlank
+    @NotBlank(message = "Title cannot be empty")
     private String title;
 
-    @NotBlank
+    @NotBlank(message = "Description cannot be empty")
     private String description;
 
     @DecimalMin("0.01")
     private Double price;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @Enumerated(EnumType.STRING)
+    private Genre genre;
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
             name = "game_platform",
             joinColumns = @JoinColumn(name = "game_id"),

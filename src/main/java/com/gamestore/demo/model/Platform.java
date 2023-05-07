@@ -23,10 +23,10 @@ public class Platform {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
+    @NotBlank(message = "Name cannot be empty")
     private String name;
 
-    @NotBlank
+    @NotBlank(message = "Description cannot be empty")
     private String description;
 
     @JsonBackReference

@@ -7,5 +7,6 @@ public class GameUtils {
         target.setTitle(source.getTitle());
         target.setDescription(source.getDescription());
         target.setPrice(source.getPrice());
+        target.setGenre(source.getGenre());
     }
 }
