@@ -105,7 +105,6 @@ public class GameServiceImpl implements GameService {
         return gameDtoPage;
     }
 
-
     @Override
     @Transactional(readOnly = true)
     public GameDto getGameById(Long id) {
@@ -142,9 +141,6 @@ public class GameServiceImpl implements GameService {
         log.info("Saved {} new games to the database", result.size());
         return result;
     }
-
-
-
 
     @Override
     @Transactional
