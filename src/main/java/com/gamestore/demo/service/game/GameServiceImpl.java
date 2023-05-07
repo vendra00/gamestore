@@ -9,6 +9,7 @@ import com.gamestore.demo.model.Game;
 import com.gamestore.demo.model.Platform;
 import com.gamestore.demo.repository.GameRepository;
 import com.gamestore.demo.repository.PlatformRepository;
+import com.gamestore.demo.service.game.utils.GameUtils;
 import com.gamestore.demo.service.validation.GameValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
@@ -100,20 +101,13 @@ public class GameServiceImpl implements GameService {
         return result;
     }
 
-
     @Override
     @Transactional
     public Game updateGame(Long id, Game game) {
         log.info("Updating game with ID {} in the database", id);
         Game existingGame = gameRepository.findById(id).orElseThrow(() -> new GameNotFoundException(id));
-        setEditedGameValues(game, existingGame);
+        GameUtils.setEditedGameValues(game, existingGame);
         return gameRepository.save(existingGame);
-    }
-
-    private static void setEditedGameValues(Game game, Game existingGame) {
-        existingGame.setTitle(game.getTitle());
-        existingGame.setDescription(game.getDescription());
-        existingGame.setPrice(game.getPrice());
     }
 
     @Override

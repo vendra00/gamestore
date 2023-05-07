@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface GameRepository extends JpaRepository<Game, Long> {
-    @Query("SELECT g FROM Game g JOIN g.platforms p WHERE p.name = :platformName")
+    @Query("SELECT g FROM Game g JOIN g.platforms p WHERE p.name LIKE %:platformName%")
     Page<Game> findByPlatformName(@Param("platformName") String platformName, Pageable pageable);
+
 }
