@@ -41,10 +41,10 @@ public class Game {
     @Enumerated(EnumType.STRING)
     private Genre genre;
 
-    @NotNull(message = "Single player cannot be empty")
+    @NotNull(message = "Please specify if the game is for single player or not")
     private Boolean singlePlayer;
 
-    @NotNull(message = "Multi player cannot be empty")
+    @NotNull(message = "Please specify if the game is for multiplayer or not")
     private Boolean multiPlayer;
 
     @NotNull(message = "Release date cannot be empty")
