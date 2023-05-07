@@ -18,5 +18,7 @@ public interface GameRepository extends JpaRepository<Game, Long> {
     @Query("SELECT g FROM Game g WHERE YEAR(g.releaseDate) = :year")
     Page<Game> findByReleaseYear(@Param("year") int year, Pageable pageable);
 
+    Page<Game> findByTitleContainingIgnoreCase(String title, Pageable pageable);
+
 
 }

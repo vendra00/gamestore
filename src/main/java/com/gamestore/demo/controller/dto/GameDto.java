@@ -13,8 +13,9 @@ public record GameDto(
         @NotBlank String title,
         @NotBlank String description,
         @NotNull @DecimalMin("0.01") Double price,
-        Genre genre,
+        @NotNull Genre genre,
         @NotNull @PastOrPresent Date releaseDate,
+        @NotNull @PastOrPresent Date lastUpdated,
         Set<PlatformDto> platforms
 ) {
 }

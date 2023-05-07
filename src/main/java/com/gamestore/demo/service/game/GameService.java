@@ -18,5 +18,5 @@ public interface GameService {
     void deleteGameById(Long id);
     Page<GameDto> getGamesByGenre(Genre genre, Pageable pageable);
     Page<GameDto> getGamesByReleaseYear(int year, Pageable pageable);
-
+    Page<GameDto> getGamesByTitle(String title, Pageable pageable);
 }

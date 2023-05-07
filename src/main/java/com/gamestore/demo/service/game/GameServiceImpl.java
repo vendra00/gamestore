@@ -92,6 +92,19 @@ public class GameServiceImpl implements GameService {
         return gameDtoPage;
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Page<GameDto> getGamesByTitle(String title, Pageable pageable) {
+        Page<Game> games = gameRepository.findByTitleContainingIgnoreCase(title, pageable);
+        if (games.isEmpty()) {
+            log.warn("No games found in the database with title containing {}.", title);
+            throw new GameListEmptyException("No games found in the database with title containing " + title + ".");
+        }
+        Page<GameDto> gameDtoPage = games.map(GameMapper::toGameDto);
+        log.info("Found {} games in the database with title containing {}.", gameDtoPage.getTotalElements(), title);
+        return gameDtoPage;
+    }
+
 
     @Override
     @Transactional(readOnly = true)
@@ -113,6 +126,7 @@ public class GameServiceImpl implements GameService {
                 .map(game -> {
                     Set<Platform> selectedPlatforms = GameValidator.getValidPlatforms(game.getPlatforms(), platformRepository);
                     game.setPlatforms(selectedPlatforms);
+                    game.setLastUpdated(new Date());
                     try {
                         return gameRepository.save(game);
                     } catch (DataIntegrityViolationException e) {
@@ -121,6 +135,7 @@ public class GameServiceImpl implements GameService {
                     }
                 })
                 .collect(Collectors.toList());
+
 
         List<Game> result = gameRepository.saveAll(savedGames);
         log.info("Saved {} new games to the database", result.size());

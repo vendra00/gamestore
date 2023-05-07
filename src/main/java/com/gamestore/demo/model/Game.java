@@ -44,10 +44,24 @@ public class Game {
     @Temporal(TemporalType.DATE)
     private Date releaseDate;
 
+    @JsonIgnore
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastUpdated;
+
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
             name = "game_platform",
             joinColumns = @JoinColumn(name = "game_id"),
             inverseJoinColumns = @JoinColumn(name = "platform_id"))
     private Set<Platform> platforms = new HashSet<>();
+
+    @PrePersist
+    protected void onCreate() {
+        lastUpdated = new Date();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        lastUpdated = new Date();
+    }
 }

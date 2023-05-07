@@ -77,5 +77,11 @@ public class GameController {
         return new ResponseEntity<>(games, HttpStatus.OK);
     }
 
+    @GetMapping("/title/{title}")
+    public ResponseEntity<Page<GameDto>> getGamesByTitle(@PathVariable String title, @PageableDefault(size = 25) Pageable pageable) {
+        Page<GameDto> games = gameService.getGamesByTitle(title, pageable);
+        return new ResponseEntity<>(games, HttpStatus.OK);
+    }
+
 }
 

@@ -14,6 +14,7 @@ public class GameMapper {
                 game.getPrice(),
                 game.getGenre(),
                 game.getReleaseDate(),
+                game.getLastUpdated(),
                 game.getPlatforms().stream()
                         .map(platform -> new PlatformDto(
                                 platform.getName(),
