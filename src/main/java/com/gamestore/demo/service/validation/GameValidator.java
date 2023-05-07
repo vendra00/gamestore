@@ -2,9 +2,11 @@ package com.gamestore.demo.service.validation;
 
 import com.gamestore.demo.model.Game;
 import com.gamestore.demo.model.Platform;
+import com.gamestore.demo.model.enums.Genre;
 import com.gamestore.demo.repository.PlatformRepository;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -18,7 +20,10 @@ public final class GameValidator {
     }
 
     public static boolean isValidGame(Game game) {
-        return isValidGameTitle(game.getTitle()) && isValidGamePrice(BigDecimal.valueOf(game.getPrice()));
+        return isValidGameTitle(game.getTitle())
+                && isValidGamePrice(BigDecimal.valueOf(game.getPrice()))
+                && isValidGameGenre(game.getGenre())
+                && isValidGameReleaseDate(game.getReleaseDate());
     }
 
     public static boolean isValidGameTitle(String title) {
@@ -28,6 +33,15 @@ public final class GameValidator {
     public static boolean isValidGamePrice(BigDecimal price) {
         return price != null && price.compareTo(BigDecimal.ZERO) > 0;
     }
+
+    public static boolean isValidGameGenre(Genre genre) {
+        return genre != null;
+    }
+
+    public static boolean isValidGameReleaseDate(Date releaseDate) {
+        return releaseDate != null;
+    }
+
 
     public static Set<Platform> getValidPlatforms(Set<Platform> platforms, PlatformRepository platformRepository) {
         Set<Platform> validPlatforms = new HashSet<>();
