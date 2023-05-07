@@ -20,5 +20,4 @@ public interface GameRepository extends JpaRepository<Game, Long> {
 
     Page<Game> findByTitleContainingIgnoreCase(String title, Pageable pageable);
 
-
 }

@@ -15,7 +15,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-
 @Entity
 @Getter
 @Setter
@@ -47,7 +46,6 @@ public class Game {
     @NotNull
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastUpdated = new Date();
-
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
