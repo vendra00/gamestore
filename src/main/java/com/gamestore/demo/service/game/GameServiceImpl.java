@@ -21,10 +21,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Transactional
@@ -109,25 +107,28 @@ public class GameServiceImpl implements GameService {
 
     @Override
     public List<Game> saveGame(List<Game> games) {
-        List<Game> savedGames = new ArrayList<>();
-        for (Game game : games) {
-            if (!GameValidator.isValidGame(game)) {
-                continue;
-            }
-            log.info("Saving new game with title {} to the database", game.getTitle());
-            Set<Platform> selectedPlatforms = GameValidator.getValidPlatforms(game.getPlatforms(), platformRepository);
-            game.setPlatforms(selectedPlatforms);
-            try {
-                savedGames.add(gameRepository.save(game));
-            } catch (DataIntegrityViolationException e) {
-                log.warn("Could not save game with title {} to the database because it already exists", game.getTitle());
-                throw new GameAlreadyExistsException(game.getTitle());
-            }
-        }
+        List<Game> savedGames = games.stream()
+                .filter(GameValidator::isValidGame)
+                .peek(game -> log.info("Saving new game with title {} to the database", game.getTitle()))
+                .map(game -> {
+                    Set<Platform> selectedPlatforms = GameValidator.getValidPlatforms(game.getPlatforms(), platformRepository);
+                    game.setPlatforms(selectedPlatforms);
+                    try {
+                        return gameRepository.save(game);
+                    } catch (DataIntegrityViolationException e) {
+                        log.warn("Could not save game with title {} to the database because it already exists", game.getTitle());
+                        throw new GameAlreadyExistsException(game.getTitle());
+                    }
+                })
+                .collect(Collectors.toList());
+
         List<Game> result = gameRepository.saveAll(savedGames);
         log.info("Saved {} new games to the database", result.size());
         return result;
     }
+
+
+
 
     @Override
     @Transactional
