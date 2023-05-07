@@ -60,7 +60,7 @@ public class GameController {
     }
 
     @GetMapping("/platform/{platformName}")
-    public ResponseEntity<Page<GameDto>> getGamesByPlatformName(@RequestParam("platform") String platformName, @PageableDefault(size = 25) Pageable pageable) {
+    public ResponseEntity<Page<GameDto>> getGamesByPlatformName(@PathVariable String platformName, @PageableDefault(size = 25) Pageable pageable) {
         Page<GameDto> games = gameService.getGamesByPlatformName(platformName, pageable);
         return new ResponseEntity<>(games, HttpStatus.OK);
     }
