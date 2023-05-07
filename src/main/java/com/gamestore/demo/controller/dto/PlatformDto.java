@@ -1,4 +1,8 @@
 package com.gamestore.demo.controller.dto;
 
-public record PlatformDto(String name, String description) {
-}
+import jakarta.validation.constraints.NotBlank;
+
+public record PlatformDto(
+        @NotBlank String name,
+        @NotBlank String description)
+{ }

@@ -5,11 +5,13 @@ import com.gamestore.demo.model.enums.Genre;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -37,6 +39,10 @@ public class Game {
 
     @Enumerated(EnumType.STRING)
     private Genre genre;
+
+    @NotNull(message = "Release date cannot be empty")
+    @Temporal(TemporalType.DATE)
+    private Date releaseDate;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
