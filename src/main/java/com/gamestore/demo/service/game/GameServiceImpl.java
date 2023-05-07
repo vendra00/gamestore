@@ -46,7 +46,7 @@ public class GameServiceImpl implements GameService {
         Page<Game> gamePage = gameRepository.findAll(pageable);
         if (gamePage.isEmpty()) {
             log.warn("No games found in the database.");
-            throw new GameListEmptyException();
+            throw new GameListEmptyException("No games found in the database.");
         }
         Page<GameDto> gameDtoPage = gamePage.map(game -> new GameDto(
                 game.getTitle(),
@@ -62,7 +62,6 @@ public class GameServiceImpl implements GameService {
         log.info("Found {} games in the database.", gameDtoPage.getTotalElements());
         return gameDtoPage;
     }
-
 
     @Override
     public List<GameDto> getGamesByPlatformName(String platformName) {

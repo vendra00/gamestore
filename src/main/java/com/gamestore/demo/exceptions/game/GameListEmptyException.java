@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
 public class GameListEmptyException extends RuntimeException {
-    public GameListEmptyException() {
-        super("No games were found.");
+    public GameListEmptyException(String message) {
+        super(message);
     }
 }

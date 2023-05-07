@@ -1,8 +1,7 @@
 package com.gamestore.demo.controller;
 
-import com.gamestore.demo.exceptions.game.GameListEmptyException;
-import com.gamestore.demo.model.Game;
 import com.gamestore.demo.controller.dto.GameDto;
+import com.gamestore.demo.model.Game;
 import com.gamestore.demo.service.game.GameService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,9 +28,6 @@ public class GameController {
     @GetMapping("")
     public ResponseEntity<Page<GameDto>> getAllGames(@PageableDefault(size = 25) Pageable pageable) {
         Page<GameDto> games = gameService.getAllGames(pageable);
-        if (games.isEmpty()) {
-            throw new GameListEmptyException();
-        }
         return new ResponseEntity<>(games, HttpStatus.OK);
     }
 
