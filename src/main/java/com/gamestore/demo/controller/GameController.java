@@ -70,5 +70,12 @@ public class GameController {
         Page<GameDto> games = gameService.getGamesByGenre(genre, pageable);
         return new ResponseEntity<>(games, HttpStatus.OK);
     }
+
+    @GetMapping("/year/{year}")
+    public ResponseEntity<Page<GameDto>> getGamesByReleaseYear(@PathVariable int year, @PageableDefault(size = 25) Pageable pageable) {
+        Page<GameDto> games = gameService.getGamesByReleaseYear(year, pageable);
+        return new ResponseEntity<>(games, HttpStatus.OK);
+    }
+
 }
 

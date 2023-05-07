@@ -83,6 +83,20 @@ public class GameServiceImpl implements GameService {
 
     @Override
     @Transactional(readOnly = true)
+    public Page<GameDto> getGamesByReleaseYear(int year, Pageable pageable) {
+        Page<Game> games = gameRepository.findByReleaseYear(year, pageable);
+        if (games.isEmpty()) {
+            log.warn("No games found in the database released in the year {}.", year);
+            throw new GameListEmptyException("No games found in the database released in the year " + year + ".");
+        }
+        Page<GameDto> gameDtoPage = games.map(GameMapper::toGameDto);
+        log.info("Found {} games in the database released in the year {}.", gameDtoPage.getTotalElements(), year);
+        return gameDtoPage;
+    }
+
+
+    @Override
+    @Transactional(readOnly = true)
     public GameDto getGameById(Long id) {
         log.info("Retrieving game with ID {} from the database", id);
         Game game = gameRepository.findById(id).orElseThrow(() -> new GameNotFoundException(id));

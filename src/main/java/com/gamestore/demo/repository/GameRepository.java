@@ -15,4 +15,8 @@ public interface GameRepository extends JpaRepository<Game, Long> {
     @Query("SELECT g FROM Game g WHERE g.genre = :genre")
     Page<Game> findByGenre(@Param("genre") Genre genre, Pageable pageable);
 
+    @Query("SELECT g FROM Game g WHERE YEAR(g.releaseDate) = :year")
+    Page<Game> findByReleaseYear(@Param("year") int year, Pageable pageable);
+
+
 }

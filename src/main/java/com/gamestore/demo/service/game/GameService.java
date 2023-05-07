@@ -17,4 +17,6 @@ public interface GameService {
     Game updateGame(Long id, Game gameDto);
     void deleteGameById(Long id);
     Page<GameDto> getGamesByGenre(Genre genre, Pageable pageable);
+    Page<GameDto> getGamesByReleaseYear(int year, Pageable pageable);
+
 }
