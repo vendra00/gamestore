@@ -2,6 +2,7 @@ package com.gamestore.demo.service.validation;
 
 import com.gamestore.demo.model.Game;
 import com.gamestore.demo.model.Platform;
+import com.gamestore.demo.model.Publisher;
 import com.gamestore.demo.model.enums.Genre;
 import com.gamestore.demo.repository.PlatformRepository;
 
@@ -40,6 +41,10 @@ public final class GameValidator {
 
     public static boolean isValidGameReleaseDate(Date releaseDate) {
         return releaseDate != null;
+    }
+
+    private static boolean isValidPublisher(Publisher publisher) {
+        return publisher != null && publisher.getName() != null && publisher.getCountry() != null;
     }
 
 

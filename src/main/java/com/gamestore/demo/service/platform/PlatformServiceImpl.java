@@ -12,8 +12,14 @@ import java.util.Optional;
 @Service
 public class PlatformServiceImpl implements PlatformService {
 
+
+    private final PlatformRepository platformRepository;
+
     @Autowired
-    private PlatformRepository platformRepository;
+    public PlatformServiceImpl(PlatformRepository platformRepository) {
+        this.platformRepository = platformRepository;
+    }
+
 
     @Override
     public List<Platform> getAllPlatforms() {

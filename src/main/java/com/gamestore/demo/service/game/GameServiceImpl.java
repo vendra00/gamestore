@@ -7,9 +7,11 @@ import com.gamestore.demo.exceptions.game.GameNotFoundException;
 import com.gamestore.demo.mapper.GameMapper;
 import com.gamestore.demo.model.Game;
 import com.gamestore.demo.model.Platform;
+import com.gamestore.demo.model.Publisher;
 import com.gamestore.demo.model.enums.Genre;
 import com.gamestore.demo.repository.GameRepository;
 import com.gamestore.demo.repository.PlatformRepository;
+import com.gamestore.demo.repository.PublisherRepository;
 import com.gamestore.demo.service.game.utils.GameUtils;
 import com.gamestore.demo.service.validation.GameValidator;
 import lombok.extern.slf4j.Slf4j;
@@ -31,11 +33,13 @@ public class GameServiceImpl implements GameService {
 
     private final GameRepository gameRepository;
     private final PlatformRepository platformRepository;
+    private final PublisherRepository publisherRepository;
 
     @Autowired
-    public GameServiceImpl(GameRepository gameRepository, PlatformRepository platformRepository) {
+    public GameServiceImpl(GameRepository gameRepository, PlatformRepository platformRepository, PublisherRepository publisherRepository) {
         this.gameRepository = gameRepository;
         this.platformRepository = platformRepository;
+        this.publisherRepository = publisherRepository;
     }
 
     @Override
@@ -153,20 +157,36 @@ public class GameServiceImpl implements GameService {
                     Set<Platform> selectedPlatforms = GameValidator.getValidPlatforms(game.getPlatforms(), platformRepository);
                     game.setPlatforms(selectedPlatforms);
                     game.setLastUpdated(new Date());
+                    Publisher publisher = game.getPublisher();
+                    if (publisher != null) {
+                        Optional<Publisher> optionalPublisher = publisherRepository.findByName(publisher.getName());
+                        if (optionalPublisher.isPresent()) {
+                            game.setPublisher(optionalPublisher.get());
+                            Set<Game> gamesHash = new HashSet<>(optionalPublisher.get().getGames());
+                            gamesHash.add(game);
+                            optionalPublisher.get().setGames(gamesHash);
+                        } else {
+                            publisher.setGames(Set.of(game));
+                            game.setPublisher(publisher);
+                            publisherRepository.save(publisher);
+                        }
+                    }
                     try {
-                        return gameRepository.save(game);
+                        Game savedGame = gameRepository.save(game);
+                        log.info("Saved game with ID {} and title {} to the database", savedGame.getId(), savedGame.getTitle());
+                        return savedGame;
                     } catch (DataIntegrityViolationException e) {
                         log.warn("Could not save game with title {} to the database because it already exists", game.getTitle());
                         throw new GameAlreadyExistsException(game.getTitle());
                     }
                 })
                 .collect(Collectors.toList());
-
-
         List<Game> result = gameRepository.saveAll(savedGames);
         log.info("Saved {} new games to the database", result.size());
         return result;
     }
+
+
 
     @Override
     @Transactional

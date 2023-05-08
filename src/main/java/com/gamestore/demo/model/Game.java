@@ -62,6 +62,10 @@ public class Game {
             inverseJoinColumns = @JoinColumn(name = "platform_id"))
     private Set<Platform> platforms = new HashSet<>();
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "publisher_id")
+    private Publisher publisher;
+
     @PrePersist
     protected void onCreate() {
         lastUpdated = new Date();
