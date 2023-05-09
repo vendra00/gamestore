@@ -8,9 +8,11 @@ import com.gamestore.demo.repository.GameRepository;
 import com.gamestore.demo.repository.PlatformRepository;
 import com.gamestore.demo.repository.PublisherRepository;
 import com.gamestore.demo.service.validation.GameValidator;
+import com.gamestore.demo.service.validation.PublisherValidator;
 import org.slf4j.Logger;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import java.lang.reflect.Field;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Optional;
@@ -18,13 +20,18 @@ import java.util.Set;
 
 public class GameUtils {
     public static void setEditedGameValues(Game source, Game target) {
-        target.setTitle(source.getTitle());
-        target.setDescription(source.getDescription());
-        target.setPrice(source.getPrice());
-        target.setGenre(source.getGenre());
-        target.setSinglePlayer(source.getSinglePlayer());
-        target.setMultiPlayer(source.getMultiPlayer());
-        target.setReleaseDate((source.getReleaseDate()));
+        Field[] fields = Game.class.getDeclaredFields();
+        for (Field field : fields) {
+            try {
+                field.setAccessible(true);
+                Object value = field.get(source);
+                if (value != null) {
+                    field.set(target, value);
+                }
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public static void setPlatforms(Game game, PlatformRepository platformRepository) {
@@ -47,10 +54,12 @@ public class GameUtils {
             addGameToPublisher(game, optionalPublisher.get());
             game.setPublisher(optionalPublisher.get());
         } else {
+            PublisherValidator.validatePublisher(publisher);
             setGamesInPublisher(game, publisher);
             game.setPublisher(publisherRepository.save(publisher));
         }
     }
+
 
     private static void addGameToPublisher(Game game, Publisher publisher) {
         Set<Game> games = new HashSet<>(publisher.getGames());

@@ -170,6 +170,7 @@ public class GameServiceImpl implements GameService {
     public Game updateGame(Long id, Game game) {
         log.info("Updating game with ID {} in the database", id);
         Game existingGame = gameRepository.findById(id).orElseThrow(() -> new GameNotFoundException(id));
+        Hibernate.initialize(existingGame);
         GameUtils.setEditedGameValues(game, existingGame);
         return gameRepository.save(existingGame);
     }
