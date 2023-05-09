@@ -1,13 +1,10 @@
 package com.gamestore.demo.service.game;
 
 import com.gamestore.demo.controller.dto.GameDto;
-import com.gamestore.demo.exceptions.game.GameAlreadyExistsException;
 import com.gamestore.demo.exceptions.game.GameListEmptyException;
 import com.gamestore.demo.exceptions.game.GameNotFoundException;
 import com.gamestore.demo.mapper.GameMapper;
 import com.gamestore.demo.model.Game;
-import com.gamestore.demo.model.Platform;
-import com.gamestore.demo.model.Publisher;
 import com.gamestore.demo.model.enums.Genre;
 import com.gamestore.demo.repository.GameRepository;
 import com.gamestore.demo.repository.PlatformRepository;
@@ -17,13 +14,13 @@ import com.gamestore.demo.service.validation.GameValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -150,43 +147,23 @@ public class GameServiceImpl implements GameService {
     @Override
     @Transactional
     public List<Game> saveGame(List<Game> games) {
-        List<Game> savedGames = games.stream()
+        List<Game> validGames = games.stream()
                 .filter(GameValidator::isValidGame)
+                .toList();
+
+        List<Game> savedGames = validGames.stream()
                 .peek(game -> log.info("Saving new game with title {} to the database", game.getTitle()))
                 .map(game -> {
-                    Set<Platform> selectedPlatforms = GameValidator.getValidPlatforms(game.getPlatforms(), platformRepository);
-                    game.setPlatforms(selectedPlatforms);
-                    game.setLastUpdated(new Date());
-                    Publisher publisher = game.getPublisher();
-                    if (publisher != null) {
-                        Optional<Publisher> optionalPublisher = publisherRepository.findByName(publisher.getName());
-                        if (optionalPublisher.isPresent()) {
-                            game.setPublisher(optionalPublisher.get());
-                            Set<Game> gamesHash = new HashSet<>(optionalPublisher.get().getGames());
-                            gamesHash.add(game);
-                            optionalPublisher.get().setGames(gamesHash);
-                        } else {
-                            publisher.setGames(Set.of(game));
-                            game.setPublisher(publisher);
-                            publisherRepository.save(publisher);
-                        }
-                    }
-                    try {
-                        Game savedGame = gameRepository.save(game);
-                        log.info("Saved game with ID {} and title {} to the database", savedGame.getId(), savedGame.getTitle());
-                        return savedGame;
-                    } catch (DataIntegrityViolationException e) {
-                        log.warn("Could not save game with title {} to the database because it already exists", game.getTitle());
-                        throw new GameAlreadyExistsException(game.getTitle());
-                    }
+                    GameUtils.setPlatforms(game, platformRepository);
+                    GameUtils.setLastUpdated(game);
+                    GameUtils.setPublisher(game, publisherRepository);
+                    return GameUtils.saveGame(game, gameRepository, log);
                 })
                 .collect(Collectors.toList());
-        List<Game> result = gameRepository.saveAll(savedGames);
-        log.info("Saved {} new games to the database", result.size());
-        return result;
+
+        log.info("Saved {} new games to the database", savedGames.size());
+        return savedGames;
     }
-
-
 
     @Override
     @Transactional

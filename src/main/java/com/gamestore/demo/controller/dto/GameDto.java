@@ -19,6 +19,6 @@ public record GameDto(
         @NotNull Boolean multiPlayer,
         @NotNull @PastOrPresent Date lastUpdated,
         @NotNull Set<PlatformDto> platforms,
-        @NotNull PublisherForGameDto publisherDto
+        @NotNull PublisherForGameDto publisher
 ) {
 }

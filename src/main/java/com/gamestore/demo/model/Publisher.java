@@ -1,5 +1,6 @@
 package com.gamestore.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.gamestore.demo.model.enums.Country;
 import jakarta.persistence.*;
@@ -21,6 +22,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class Publisher {
     @Id
+    @JsonIgnore
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
