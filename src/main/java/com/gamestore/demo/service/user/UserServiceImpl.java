@@ -42,6 +42,7 @@ public class UserServiceImpl implements UserService {
             userUtils.prepareUserData(user);
             return userRepository.save(user);
         } catch (DataIntegrityViolationException e) {
+            log.debug("User with email {} already exists", user.getEmail());
             throw new ValidationException("User with email " + user.getEmail() + " already exists.");
         }
     }
@@ -50,7 +51,7 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     public Page<User> getAllUsers(Pageable pageable) {
         log.debug("getAllUsers called with pageable: {}", pageable);
-        return null;
+        return userRepository.findAll(pageable);
     }
 
     @Override
@@ -59,8 +60,10 @@ public class UserServiceImpl implements UserService {
         log.debug("getUserById called with id: {}", id);
         Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isEmpty()) {
+            log.debug("User not found");
             throw new UserNotFoundException(id);
         }
+        log.debug("User found");
         return optionalUser;
     }
 
@@ -70,8 +73,10 @@ public class UserServiceImpl implements UserService {
         log.debug("getUserByEmail called with email: {}", email);
         Optional<User> optionalUser = userRepository.findByEmail(email);
         if (optionalUser.isPresent()) {
+            log.debug("User found");
             return optionalUser;
         } else {
+            log.debug("User not found");
             throw new UserNotFoundException(email);
         }
     }
@@ -88,17 +93,14 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void addGameToUser(Long userId, Game game) {
         log.debug("addGameToUser called");
-
-        // Find the user by ID
         Optional<User> optionalUser = userRepository.findById(userId);
-
         if (optionalUser.isPresent()) {
-            // If user is found, add the game to the user's collection
+            log.debug("User found");
             User user = optionalUser.get();
             user.getGames().add(game);
             userRepository.save(user);
         } else {
-            // If user is not found, throw an exception
+            log.debug("User not found");
             throw new UserNotFoundException(userId);
         }
     }
@@ -124,8 +126,10 @@ public class UserServiceImpl implements UserService {
         log.debug("deleteUserById called");
         Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isPresent()) {
+            log.debug("User found");
             userRepository.deleteById(id);
         } else {
+            log.debug("User not found");
             throw new UserNotFoundException(id);
         }
     }

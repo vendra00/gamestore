@@ -22,16 +22,25 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("")
+    @GetMapping("/get-all")
     public ResponseEntity<Page<User>> getAllUsers(Pageable pageable) {
+        log.debug("getAllUsers called with pageable: {}", pageable);
         Page<User> users = userService.getAllUsers(pageable);
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    @PostMapping("")
+    @PostMapping("/register")
     public ResponseEntity<User> saveUser(@RequestBody User user) {
+        log.debug("saveUser called with user: {}", user);
         User savedUser = userService.saveUser(user);
         return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> deletePublisher(@PathVariable Long id) {
+        log.debug("deleteUserById called with id: {}", id);
+        userService.deleteUserById(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 }
