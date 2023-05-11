@@ -1,9 +1,8 @@
 package com.gamestore.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.gamestore.demo.model.enums.Country;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -20,25 +19,30 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class Publisher {
+public class User {
     @Id
     @JsonIgnore
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Name cannot be empty")
-    private String name;
+    @NotBlank(message = "Username cannot be empty")
+    private String username;
 
-    @Enumerated(EnumType.STRING)
-    private Country country;
+    @NotBlank(message = "Password cannot be empty")
+    private String password;
 
-    @OneToMany(mappedBy = "publisher", cascade = CascadeType.ALL)
-    @JsonIgnoreProperties("publisher")
+    @NotBlank(message = "Email cannot be empty")
+    @Column(unique = true)
+    @Email(message = "Email should be valid")
+    private String email;
+
+    @NotNull(message = "Please specify if the user is an admin or not")
+    private Boolean isAdmin;
+
+    @ManyToMany(mappedBy = "users", fetch = FetchType.LAZY)
     private Set<Game> games = new HashSet<>();
 
     @NotNull
-    @Column(name = "last_updated", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastUpdated = new Date();
 

@@ -52,8 +52,16 @@ public class Game {
     private Date releaseDate;
 
     @NotNull
+    @Column(name = "last_updated", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastUpdated = new Date();
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "game_user",
+            joinColumns = @JoinColumn(name = "game_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
+    private Set<User> users = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
@@ -62,7 +70,8 @@ public class Game {
             inverseJoinColumns = @JoinColumn(name = "platform_id"))
     private Set<Platform> platforms = new HashSet<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @NotNull(message = "Publisher cannot be empty")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "publisher_id")
     private Publisher publisher;
 

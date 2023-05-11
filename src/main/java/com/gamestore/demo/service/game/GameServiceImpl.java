@@ -9,7 +9,7 @@ import com.gamestore.demo.model.enums.Genre;
 import com.gamestore.demo.repository.GameRepository;
 import com.gamestore.demo.repository.PlatformRepository;
 import com.gamestore.demo.repository.PublisherRepository;
-import com.gamestore.demo.service.game.utils.GameUtils;
+import com.gamestore.demo.service.utils.GameUtils;
 import com.gamestore.demo.service.validation.GameValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
@@ -147,10 +147,7 @@ public class GameServiceImpl implements GameService {
     @Override
     @Transactional
     public List<Game> saveGame(List<Game> games) {
-        List<Game> validGames = games.stream()
-                .filter(GameValidator::isValidGame)
-                .toList();
-
+        List<Game> validGames = games.stream().filter(GameValidator::isValidGame).toList();
         List<Game> savedGames = validGames.stream()
                 .peek(game -> log.info("Saving new game with title {} to the database", game.getTitle()))
                 .map(game -> {

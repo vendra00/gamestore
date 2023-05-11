@@ -1,4 +1,4 @@
-package com.gamestore.demo.service.game.utils;
+package com.gamestore.demo.service.utils;
 
 import com.gamestore.demo.exceptions.game.GameAlreadyExistsException;
 import com.gamestore.demo.model.Game;
