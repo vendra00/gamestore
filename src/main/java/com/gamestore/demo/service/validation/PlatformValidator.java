@@ -1,11 +1,12 @@
 package com.gamestore.demo.service.validation;
 
 import com.gamestore.demo.model.Platform;
+import org.springframework.stereotype.Component;
 
-public final class PlatformValidator {
+@Component
+public class PlatformValidator {
 
     private PlatformValidator() {
-        throw new IllegalStateException("Utility class");
     }
 
     public static boolean isValidPlatform(Platform platform) {

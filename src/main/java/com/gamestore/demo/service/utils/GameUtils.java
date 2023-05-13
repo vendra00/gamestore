@@ -9,8 +9,11 @@ import com.gamestore.demo.repository.PlatformRepository;
 import com.gamestore.demo.repository.PublisherRepository;
 import com.gamestore.demo.service.validation.GameValidator;
 import com.gamestore.demo.service.validation.PublisherValidator;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
 import java.util.Date;
@@ -18,8 +21,22 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+@Slf4j
+@Component
 public class GameUtils {
-    public static void setEditedGameValues(Game source, Game target) {
+
+    private final GameRepository gameRepository;
+    private final GameValidator gameValidator;
+    private final PublisherValidator publisherValidator;
+
+    @Autowired
+    public GameUtils(GameRepository gameRepository, GameValidator gameValidator, PublisherValidator publisherValidator) {
+        this.gameRepository = gameRepository;
+        this.gameValidator = gameValidator;
+        this.publisherValidator = publisherValidator;
+    }
+
+    public void setEditedGameValues(Game source, Game target) {
         Field[] fields = Game.class.getDeclaredFields();
         for (Field field : fields) {
             try {
@@ -34,16 +51,16 @@ public class GameUtils {
         }
     }
 
-    public static void setPlatforms(Game game, PlatformRepository platformRepository) {
-        Set<Platform> selectedPlatforms = GameValidator.getValidPlatforms(game.getPlatforms(), platformRepository);
+    public void setPlatforms(Game game, PlatformRepository platformRepository) {
+        Set<Platform> selectedPlatforms = gameValidator.getValidPlatforms(game.getPlatforms(), platformRepository);
         game.setPlatforms(selectedPlatforms);
     }
 
-    public static void setLastUpdated(Game game) {
+    public void setLastUpdated(Game game) {
         game.setLastUpdated(new Date());
     }
 
-    public static void setPublisher(Game game, PublisherRepository publisherRepository) {
+    public void setPublisher(Game game, PublisherRepository publisherRepository) {
         Publisher publisher = game.getPublisher();
         if (publisher == null) {
             return;
@@ -54,24 +71,24 @@ public class GameUtils {
             addGameToPublisher(game, optionalPublisher.get());
             game.setPublisher(optionalPublisher.get());
         } else {
-            PublisherValidator.validatePublisher(publisher);
+            publisherValidator.validatePublisher(publisher);
             setGamesInPublisher(game, publisher);
             game.setPublisher(publisherRepository.save(publisher));
         }
     }
 
 
-    private static void addGameToPublisher(Game game, Publisher publisher) {
+    private void addGameToPublisher(Game game, Publisher publisher) {
         Set<Game> games = new HashSet<>(publisher.getGames());
         games.add(game);
         publisher.setGames(games);
     }
 
-    private static void setGamesInPublisher(Game game, Publisher publisher) {
+    private void setGamesInPublisher(Game game, Publisher publisher) {
         publisher.setGames(Set.of(game));
     }
 
-    public static Game saveGame(Game game, GameRepository gameRepository, Logger log) {
+    public Game saveGame(Game game, GameRepository gameRepository, Logger log) {
         try {
             Game savedGame = gameRepository.save(game);
             log.info("Saved game with ID {} and title {} to the database", savedGame.getId(), savedGame.getTitle());

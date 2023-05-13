@@ -1,10 +1,14 @@
 package com.gamestore.demo.service.validation;
 
+import com.gamestore.demo.exceptions.game.GameListEmptyException;
 import com.gamestore.demo.model.Game;
 import com.gamestore.demo.model.Platform;
 import com.gamestore.demo.model.Publisher;
 import com.gamestore.demo.model.enums.Genre;
 import com.gamestore.demo.repository.PlatformRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -14,41 +18,49 @@ import java.util.Set;
 
 import static com.gamestore.demo.service.validation.PlatformValidator.isValidPlatform;
 
-public final class GameValidator {
+@Slf4j
+@Component
+public class GameValidator {
 
     private GameValidator() {
-        throw new IllegalStateException("Utility class");
     }
 
-    public static boolean isValidGame(Game game) {
+    public boolean isValidGame(Game game) {
         return isValidGameTitle(game.getTitle())
                 && isValidGamePrice(BigDecimal.valueOf(game.getPrice()))
                 && isValidGameGenre(game.getGenre())
                 && isValidGameReleaseDate(game.getReleaseDate());
     }
 
-    public static boolean isValidGameTitle(String title) {
+    public boolean isValidGameTitle(String title) {
         return title != null && !title.isEmpty();
     }
 
-    public static boolean isValidGamePrice(BigDecimal price) {
+    public boolean isValidGamePrice(BigDecimal price) {
         return price != null && price.compareTo(BigDecimal.ZERO) > 0;
     }
 
-    public static boolean isValidGameGenre(Genre genre) {
+    public boolean isValidGameGenre(Genre genre) {
         return genre != null;
     }
 
-    public static boolean isValidGameReleaseDate(Date releaseDate) {
+    public void isGameEmpty(Page<Game> gamePage) {
+        if (gamePage.isEmpty()) {
+            log.warn("No games found in the database.");
+            throw new GameListEmptyException("No games found in the database.");
+        }
+    }
+
+    public boolean isValidGameReleaseDate(Date releaseDate) {
         return releaseDate != null;
     }
 
-    private static boolean isValidPublisher(Publisher publisher) {
+    private boolean isValidPublisher(Publisher publisher) {
         return publisher != null && publisher.getName() != null && publisher.getCountry() != null;
     }
 
 
-    public static Set<Platform> getValidPlatforms(Set<Platform> platforms, PlatformRepository platformRepository) {
+    public Set<Platform> getValidPlatforms(Set<Platform> platforms, PlatformRepository platformRepository) {
         Set<Platform> validPlatforms = new HashSet<>();
         for (Platform platform : platforms) {
             if (isValidPlatform(platform)) {
