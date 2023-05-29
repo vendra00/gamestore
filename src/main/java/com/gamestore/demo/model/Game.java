@@ -27,26 +27,33 @@ public class Game {
     @Column(name = "id", nullable = false)
     private Long id;
 
+    @Column(name = "title", nullable = false, unique = true, columnDefinition = "VARCHAR(100)")
     @NotBlank(message = "Title cannot be empty")
     private String title;
 
+    @Column(name = "description", nullable = false, columnDefinition = "TEXT")
     @NotBlank(message = "Description cannot be empty")
     private String description;
 
+    @Column(name = "price", nullable = false, columnDefinition = "DECIMAL(10,2)")
     @NotNull(message = "Price cannot be empty")
     @DecimalMin("0.01")
     private Double price;
 
+    @Column(name = "genre", nullable = false, columnDefinition = "VARCHAR(100)")
     @NotNull(message = "Genre cannot be empty")
     @Enumerated(EnumType.STRING)
     private Genre genre;
 
+    @Column(name = "single_player", columnDefinition = "VARCHAR(100)")
     @NotNull(message = "Please specify if the game is for single player or not")
     private Boolean singlePlayer;
 
+    @Column(name = "multi_player", columnDefinition = "VARCHAR(100)")
     @NotNull(message = "Please specify if the game is for multiplayer or not")
     private Boolean multiPlayer;
 
+    @Column(name = "release_date", nullable = false, columnDefinition = "DATE")
     @NotNull(message = "Release date cannot be empty")
     @Temporal(TemporalType.DATE)
     private Date releaseDate;

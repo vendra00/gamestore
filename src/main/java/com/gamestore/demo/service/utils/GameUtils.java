@@ -24,14 +24,11 @@ import java.util.Set;
 @Slf4j
 @Component
 public class GameUtils {
-
-    private final GameRepository gameRepository;
     private final GameValidator gameValidator;
     private final PublisherValidator publisherValidator;
 
     @Autowired
-    public GameUtils(GameRepository gameRepository, GameValidator gameValidator, PublisherValidator publisherValidator) {
-        this.gameRepository = gameRepository;
+    public GameUtils(GameValidator gameValidator, PublisherValidator publisherValidator) {
         this.gameValidator = gameValidator;
         this.publisherValidator = publisherValidator;
     }
@@ -62,9 +59,6 @@ public class GameUtils {
 
     public void setPublisher(Game game, PublisherRepository publisherRepository) {
         Publisher publisher = game.getPublisher();
-        if (publisher == null) {
-            return;
-        }
 
         Optional<Publisher> optionalPublisher = publisherRepository.findByName(publisher.getName());
         if (optionalPublisher.isPresent()) {
